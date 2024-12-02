@@ -1,4 +1,5 @@
-# Trabalho de Física Básica I - Simulação de um sistema de dois corpos seguindo as lei da gravitação
+# Trabalho de Física Básica I 
+# Simulação de um sistema de dois corpos seguindo a lei da gravitação universal
 
 Integrantes:
 
