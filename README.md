@@ -1,4 +1,4 @@
-# Trabalho de Física Básica I - Simulação de um sistema de dois corpos no sistema solar seguindo a lei da gravitação universal 
+# Trabalho de Física Básica I - Simulação do sistema solar seguindo a lei da gravitação universal 
 
 Integrantes:
 
@@ -73,7 +73,7 @@ Esta é a forma polar da equação da órbita para uma seção cônica, onde:
 O período orbital T é calculado usando a Terceira Lei de Kepler:
 
 $$
-T = 2\pi\sqrt{\displaystyle\frac{a^3}{GM_\odot}}
+T = 2\pi\displaystyle\sqrt{\frac{a^3}{GM_\odot}}
 $$
 
 onde $a$ é o semi-eixo maior, calculado como:
