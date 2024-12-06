@@ -72,7 +72,7 @@ Esta é a forma polar da equação da órbita para uma seção cônica, onde:
 
 O período orbital T é calculado usando a Terceira Lei de Kepler:
 
-T = 2\pi \sqrt{\dfrac{a^3}{GM_\odot}}
+$$T = 2\pi \sqrt{\dfrac{a^3}{GM_\odot}} $$
 
 onde $a$ é o semi-eixo maior, calculado como:
 
