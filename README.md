@@ -62,7 +62,7 @@ r(\theta) = \frac{L^2}{Km_p} \cdot \frac{1}{1 + e\cos(\theta)}
 $$
 
 Esta é a forma polar da equação da órbita para uma seção cônica, onde:
-- $\theta$ é a anomalia verdadeira (ângulo a partir do periélio)
+- $\theta$ é o ângulo a partir do periélio
 - $e$ é a excentricidade
 - $L$ é o momento angular
 - $K$ é o parâmetro gravitacional
@@ -92,22 +92,10 @@ $$
 
 ## Energia Mecânica
 
-A energia mecânica total E é constante ao longo da órbita e é dada por:
+A energia mecânica total E é constante ao longo da órbita e para uma órbita elíptica, a energia total pode ser expressa em termos:
 
 $$
-E = \frac{1}{2}m_p v^2 - \frac{GM_\odot m_p}{r}
-$$
-
-onde:
-- O primeiro termo é a energia cinética
-- O segundo termo é a energia potencial gravitacional
-- $v$ é a velocidade orbital
-- $r$ é a distância ao Sol
-
-Para uma órbita elíptica, a energia total também pode ser expressa em termos do semi-eixo maior:
-
-$$
-E = -\frac{GM_\odot m_p}{2a}
+E = -\frac{GM_\odot m_p}{r_0 + r_{max}}
 $$
 
 ## Coordenadas da Tela
