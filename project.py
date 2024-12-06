@@ -28,6 +28,9 @@ def calculate_k(mass):
 def calculate_angular_momentum(r_0, K, mass, eccentricity):
     return math.sqrt((eccentricity + 1) * (K * mass * r_0))
 
+def calculate_mechanical_energy(r_0, r_max, K):
+    return -K/(r_0+r_max)
+
 def to_screen_coords(r, theta):
     x = r * math.cos(theta) / SCALE + WIDTH/2
     y = r * math.sin(theta) / SCALE + HEIGHT/2
@@ -47,6 +50,7 @@ class Planet:
         self.color = color
         self.orbit_period = 2 * math.pi * math.sqrt(((self.r_0 + self.r_max)/2)**3 / (G * M_sun))
         self.angular_velocity = 2 * math.pi / self.orbit_period
+        self.mech_energy = calculate_mechanical_energy(self.r_0, self.r_max, self.K)
         
     def get_position(self):
         r = (self.L**2)/(self.K*self.mass) * (1/(1 + self.e*math.cos(self.theta)))
@@ -79,10 +83,10 @@ clock = pygame.time.Clock()
 
 # Initialize planets
 planets = [
-    Planet("Mercury", 0.330e24, 46e6, 69.8e6, 0.206, RED),
+    Planet("Mercurio", 0.330e24, 46e6, 69.8e6, 0.206, RED),
     Planet("Venus", 4.87e24, 107.5e6, 108.9e6, 0.007, PINK),
-    Planet("Earth", 5.97e24, 147.1e6, 152.1e6, 0.017, BLUE),
-    Planet("Mars", 0.642e24, 206.7e6, 249.3e6, 0.094, ORANGE),
+    Planet("Terra", 5.97e24, 147.1e6, 152.1e6, 0.017, BLUE),
+    Planet("Marte", 0.642e24, 206.7e6, 249.3e6, 0.094, ORANGE),
     Planet("Jupiter", 1898e24, 740.6e6, 816.4e6, 0.049, BEIGE)
 ]
 
@@ -122,13 +126,15 @@ while running:
     info_text = [
         f"Time Step: {TIME_STEP/86400:.1f} dias",
         "Espaço: Pausa  Up/Down: Aumenta Timestep",
-        "Pressione 1-5 para ver os periodos orbitais:",
+        "Pressione 1-5 para ver dados de um planeta:",
         "1: Mercurio, 2: Venus, 3: Terra, 4: Marte, 5: Jupiter"
     ]
     
     # Add selected planet information
     if selected_planet:
-        info_text.insert(1, f"{selected_planet.name} Orbital Period: {selected_planet.orbit_period/86400:.1f} days")
+        info_text.insert(1, f"{selected_planet.name} Periodo Orbital: {selected_planet.orbit_period/86400:.1f} dias")
+        info_text.insert(2, f"Momentum angular: {selected_planet.L:.2e} kgm^2/s")
+        info_text.insert(3, f"Energia Mecanica: {selected_planet.mech_energy:.2e} J")
     
     for i, text in enumerate(info_text):
         text_surface = font.render(text, True, WHITE)
