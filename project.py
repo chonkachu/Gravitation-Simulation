@@ -1,140 +1,94 @@
 import pygame
-import numpy as np
 import math
 
-# Initialize Pygame
 pygame.init()
 
-# Constants
-WIDTH = 1000
-HEIGHT = 800
-G = 6.67430e-11  # Universal gravitational constant
-SCALE = 1e9      # Scale factor for visualization
-TIME_STEP = 100  # Simulation time step in seconds
+# Window and simulation constants
+WIDTH = 1920      # Screen width in pixels
+HEIGHT = 1080     # Screen height in pixels
+G = 6.67430e-11  # Universal gravitational constant in m³/kg/s²
+SCALE = 1e9      # Scale factor to convert from meters to pixels
+TIME_STEP = 100000  # Time step for simulation in seconds
+M_sun = 1.989e30    # Sun mass in kg
 
-# Colors
+# Define colors in RGB format
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
-BLUE = (0, 0, 255)
-GRAY = (128, 128, 128)
-RED = (255, 0, 0)
+YELLOW = (255, 255, 0)    # Sun color
+BLUE = (0, 0, 255)      # Earth color
+GREEN = (0, 255, 0)       # Orbit path color
+RED = (255, 0, 0)         # Mercury color
+PINK = (255, 192, 203)    # Venus color
+ORANGE = (255, 165, 0)    # Mars color
+BEIGE = (245, 222, 179)   # Jupiter color
 
-class Slider:
-    def __init__(self, x, y, width, height, min_val, max_val, initial):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.min_val = min_val
-        self.max_val = max_val
-        self.scale = width / (max_val - min_val)
-        self.value = initial
-        self.dragging = False
-        
-        # Calculate initial position of slider button
-        self.button_x = x + (initial - min_val) * self.scale
-        self.button_rect = pygame.Rect(self.button_x - 5, y - 5, 10, height + 10)
-    
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.button_rect.collidepoint(event.pos):
-                self.dragging = True
-        elif event.type == pygame.MOUSEBUTTONUP:
-            self.dragging = False
-        elif event.type == pygame.MOUSEMOTION and self.dragging:
-            mouse_x = event.pos[0]
-            self.button_x = max(self.rect.left, min(self.rect.right, mouse_x))
-            self.button_rect.centerx = self.button_x
-            self.value = self.min_val + (self.button_x - self.rect.left) / self.scale
-    
-    def draw(self, screen):
-        # Draw slider bar
-        pygame.draw.rect(screen, GRAY, self.rect)
-        # Draw slider button
-        pygame.draw.rect(screen, RED, self.button_rect)
+def calculate_k(mass):
+    return M_sun * mass * G
 
-class TwoBodySystem:
-    def __init__(self, M, m, initial_distance):
-        self.M = M  # Primary mass
-        self.m = m  # Secondary mass
-        self.reduced_mass = (M * m)/(M + m)
-        self.K = G * M * m
+def calculate_angular_momentum(r_0, K, mass, eccentricity):
+    return math.sqrt((eccentricity + 1) * (K * mass * r_0))
+
+def to_screen_coords(r, theta):
+    x = r * math.cos(theta) / SCALE + WIDTH/2
+    y = r * math.sin(theta) / SCALE + HEIGHT/2
+    return (int(x), int(y))
+
+class Planet:
+    def __init__(self, name, mass, perihelion, aphelion, eccentricity, color):
+        self.name = name
+        self.mass = mass
+        self.r_0 = perihelion * 1000  # Convert km to m
+        self.r_max = aphelion * 1000  # Convert km to m
+        self.K = calculate_k(mass)
+        self.e = eccentricity
+        self.L = calculate_angular_momentum(self.r_0, self.K, self.mass, self.e)
+        self.theta = 0.0
+        self.history = []
+        self.color = color
+        self.orbit_period = 2 * math.pi * math.sqrt(((self.r_0 + self.r_max)/2)**3 / (G * M_sun))
+        self.angular_velocity = 2 * math.pi / self.orbit_period
         
-        # Initial positions
-        self.r1 = np.array([-m * initial_distance / (M + m), 0.0])
-        self.r2 = np.array([M * initial_distance / (M + m), 0.0])
-        
-        # Calculate initial velocity for circular orbit
-        v = math.sqrt(G * (M + m) / initial_distance)
-        self.v1 = np.array([0.0, v * m/(M + m)])
-        self.v2 = np.array([0.0, -v * M/(M + m)])
-        
-        self.history1 = []
-        self.history2 = []
-    
-    def calculate_force(self):
-        r = self.r2 - self.r1
-        r_mag = np.linalg.norm(r)
-        F = self.K * r / (r_mag**3)
-        return F
-    
-    def calculate_energy(self):
-        v_rel = self.v2 - self.v1
-        T = 0.5 * self.reduced_mass * np.dot(v_rel, v_rel)
-        r = np.linalg.norm(self.r2 - self.r1)
-        V = -self.K / r
-        return T + V
+    def get_position(self):
+        r = (self.L**2)/(self.K*self.mass) * (1/(1 + self.e*math.cos(self.theta)))
+        return r, self.theta
     
     def update(self, dt):
-        F = self.calculate_force()
+        dtheta = self.angular_velocity * dt
+        self.theta += dtheta
+        self.theta = self.theta % (2 * math.pi)
         
-        self.v1 += F * dt / self.M
-        self.v2 -= F * dt / self.m
+        r, theta = self.get_position()
+        screen_pos = to_screen_coords(r, theta)
         
-        self.r1 += self.v1 * dt
-        self.r2 += self.v2 * dt
-        
-        screen_pos1 = (int(self.r1[0]/SCALE + WIDTH/2), 
-                      int(self.r1[1]/SCALE + HEIGHT/2))
-        screen_pos2 = (int(self.r2[0]/SCALE + WIDTH/2), 
-                      int(self.r2[1]/SCALE + HEIGHT/2))
-        
-        self.history1.append(screen_pos1)
-        self.history2.append(screen_pos2)
-        
-        if len(self.history1) > 100:
-            self.history1.pop(0)
-            self.history2.pop(0)
+        self.history.append(screen_pos)
+        if len(self.history) > 50:
+            self.history.pop(0)
     
     def draw(self, screen):
-        if len(self.history1) > 1:
-            pygame.draw.lines(screen, YELLOW, False, self.history1, 1)
-            pygame.draw.lines(screen, BLUE, False, self.history2, 1)
+        if len(self.history) > 1:
+            pygame.draw.lines(screen, self.color, False, self.history, 1)
         
-        pos1 = (int(self.r1[0]/SCALE + WIDTH/2), int(self.r1[1]/SCALE + HEIGHT/2))
-        pos2 = (int(self.r2[0]/SCALE + WIDTH/2), int(self.r2[1]/SCALE + HEIGHT/2))
-        
-        radius1 = int(math.log10(self.M) * 1.5)
-        radius2 = int(math.log10(self.m) * 1.5)
-        
-        pygame.draw.circle(screen, YELLOW, pos1, radius1)
-        pygame.draw.circle(screen, BLUE, pos2, radius2)
+        r, theta = self.get_position()
+        planet_pos = to_screen_coords(r, theta)
+        pygame.draw.circle(screen, self.color, planet_pos, 10)
 
 # Set up display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Two-Body Gravitational System")
+pygame.display.set_caption("Solar System Simulation")
 clock = pygame.time.Clock()
 
-# Initialize system
-M_sun = 1.989e30  # Mass of Sun in kg
-M_earth = 5.972e24  # Mass of Earth in kg
-initial_distance = 1.496e11  # Average Sun-Earth distance in meters
+# Initialize planets
+planets = [
+    Planet("Mercury", 0.330e24, 46e6, 69.8e6, 0.206, RED),
+    Planet("Venus", 4.87e24, 107.5e6, 108.9e6, 0.007, PINK),
+    Planet("Earth", 5.97e24, 147.1e6, 152.1e6, 0.017, BLUE),
+    Planet("Mars", 0.642e24, 206.7e6, 249.3e6, 0.094, ORANGE),
+    Planet("Jupiter", 1898e24, 740.6e6, 816.4e6, 0.049, BEIGE)
+]
 
-# Create slider for distance
-distance_slider = Slider(50, 50, 200, 20, 1e11, 3e11, initial_distance)
-system = TwoBodySystem(M_sun, M_earth, distance_slider.value)
+selected_planet = None
 
-# Font for text
-font = pygame.font.Font(None, 36)
-
+# Main simulation loop
 running = True
 paused = False
 while running:
@@ -142,37 +96,43 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:  # Reset simulation
-                system = TwoBodySystem(M_sun, M_earth, distance_slider.value)
-            elif event.key == pygame.K_SPACE:  # Pause/unpause
+            if event.key == pygame.K_SPACE:
                 paused = not paused
-        
-        # Handle slider events
-        distance_slider.handle_event(event)
+            elif event.key == pygame.K_UP:
+                TIME_STEP *= 1.1
+            elif event.key == pygame.K_DOWN:
+                TIME_STEP /= 1.1
+            # Handle number keys 1-5
+            elif event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5]:
+                selected_planet = planets[event.key - pygame.K_1]
     
-    # Update system if not paused
     if not paused:
-        system.update(TIME_STEP)
+        for planet in planets:
+            planet.update(TIME_STEP)
     
-    # Clear screen
     screen.fill(BLACK)
     
-    # Draw system
-    system.draw(screen)
+    pygame.draw.circle(screen, YELLOW, (WIDTH//2, HEIGHT//2), 20)
     
-    # Draw slider and labels
-    distance_slider.draw(screen)
-    distance_text = font.render(f"Distance: {distance_slider.value:.2e} m", True, WHITE)
-    screen.blit(distance_text, (270, 50))
+    for planet in planets:
+        planet.draw(screen)
     
-    # Display total energy
-    energy = system.calculate_energy()
-    energy_text = font.render(f"Energy: {energy:.2e} J", True, WHITE)
-    screen.blit(energy_text, (10, 10))
+    # Draw information
+    font = pygame.font.Font(None, 36)
+    info_text = [
+        f"Time Step: {TIME_STEP/86400:.1f} dias",
+        "Espaço: Pausa  Up/Down: Aumenta Timestep",
+        "Pressione 1-5 para ver os periodos orbitais:",
+        "1: Mercurio, 2: Venus, 3: Terra, 4: Marte, 5: Jupiter"
+    ]
     
-    # Display controls
-    controls_text = font.render("R: Reset  Space: Pause", True, WHITE)
-    screen.blit(controls_text, (10, HEIGHT - 30))
+    # Add selected planet information
+    if selected_planet:
+        info_text.insert(1, f"{selected_planet.name} Orbital Period: {selected_planet.orbit_period/86400:.1f} days")
+    
+    for i, text in enumerate(info_text):
+        text_surface = font.render(text, True, WHITE)
+        screen.blit(text_surface, (10, 10 + i*40))
     
     # Update display
     pygame.display.flip()
