@@ -10,7 +10,7 @@ do afélio, periélio, e excentricidade de acordo com a [tabela](https://nssdc.g
 Comandos da simulação:
 
 1. Teclas 1-5 selecionam planetas: Mercurio, Venus, Terra, Marte, Jupiter
-2. Teclas Up/Down aumentam/diminuem o timestep da simulação, por padrao e 1.2 dias
+2. Teclas Up/Down aumentam/diminuem o timestep da simulação, por padrao comeca em 1.2 dias
 3. Tecla Espaco pausa a simulação
 4. Tecla R reseta a simulação
 
