@@ -4,17 +4,17 @@ Integrantes:
 
 Christian Bernard Simas Corrêa Gioia Ribeiro - 11795572
 
-O projeto e uma simulação do sistema solar com os 5 primeiros planetas. Cada planeta tem seus valores
+O projeto é uma simulação do sistema solar com os 5 primeiros planetas. Cada planeta tem seus valores
 do afélio, periélio, e excentricidade de acordo com a [tabela](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
 Comandos da simulação:
 
 1. Teclas 1-5 selecionam planetas: Mercurio, Venus, Terra, Marte, Jupiter
-2. Teclas Up/Down aumentam/diminuem o timestep da simulação, por padrao comeca em 1.2 dias
-3. Tecla Espaco pausa a simulação
+2. Teclas Up/Down aumentam/diminuem o timestep da simulação, por padrão começa em 1.2 dias
+3. Tecla Espaço pausa a simulação
 4. Tecla R reseta a simulação
 
-Apos um planeta ser selecionado os valores do momentum angular, período orbital e energia mecânica do planeta em questao aparecem no canto superior direito.
+Apos um planeta ser selecionado os valores do momentum angular, período orbital e energia mecânica do planeta em questão aparecem no canto superior esquerdo.
 
 ## Variáveis Principais
 
