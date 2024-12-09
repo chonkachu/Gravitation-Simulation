@@ -4,13 +4,21 @@ Integrantes:
 
 Christian Bernard Simas Corrêa Gioia Ribeiro - 11795572
 
-# Documentação da Mecânica Orbital do Sistema Solar
+O projeto e uma simulação do sistema solar com os 5 primeiros planetas. Cada planeta tem seus valores
+do afélio, periélio, e excentricidade de acordo com a [tabela](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
-Este documento explica os princípios matemáticos e equações utilizadas na simulação do sistema solar.
+Comandos da simulação:
+
+1. Teclas 1-5 selecionam planetas: Mercurio, Venus, Terra, Marte, Jupiter
+2. Teclas Up/Down aumentam/diminuem o timestep da simulação, por padrao e 1.2 dias
+3. Tecla Espaco pausa a simulação
+4. Tecla R reseta a simulação
+
+Apos um planeta ser selecionado os valores do momentum angular, período orbital e energia mecânica do planeta em questao aparecem no canto superior direito.
 
 ## Variáveis Principais
 
-- $M_\odot$ : Massa do Sol
+- $M$ : Massa do Sol
 - $m_p$ : Massa do planeta
 - $G$ : Constante gravitacional universal
 - $r$ : Distância do Sol ao planeta
@@ -21,23 +29,21 @@ Este documento explica os princípios matemáticos e equações utilizadas na si
 
 ## Constantes Fundamentais
 
-$$
+$
 G = 6.67430 \times 10^{-11} \text{ m}^3\text{kg}^{-1}\text{s}^{-2}
-$$
+$
 
-$$
-M_\odot = 1.989 \times 10^{30} \text{ kg}
-$$
+$
+M = 1.989 \times 10^{30} \text{ kg}
+$
 
 ## Parâmetro Gravitacional
 
 O parâmetro gravitacional K é calculado como:
 
 $$
-K = GM_\odot m_p
+K = GMm_p
 $$
-
-Isso representa o efeito gravitacional combinado do Sol e do planeta.
 
 ## Momento Angular
 
@@ -47,12 +53,6 @@ $$
 L = \sqrt{(1 + e)(Km_pr_0)}
 $$
 
-onde:
-- $e$ é a excentricidade
-- $r_0$ é a distância do periélio
-- $K$ é o parâmetro gravitacional
-- $m_p$ é a massa do planeta
-
 ## Posição Orbital
 
 A posição radial do planeta é dada pela equação da órbita:
@@ -61,18 +61,13 @@ $$
 r(\theta) = \frac{L^2}{Km_p} \cdot \frac{1}{1 + e\cos(\theta)}
 $$
 
-Esta é a forma polar da equação da órbita para uma seção cônica, onde:
-- $\theta$ é o ângulo a partir do periélio
-- $e$ é a excentricidade
-- $L$ é o momento angular
-- $K$ é o parâmetro gravitacional
-- $m_p$ é a massa do planeta
+Essa é a forma polar da equação da órbita para uma seção cônica (uma elipse, neste caso):
 
 ## Período Orbital
 
 O período orbital T é calculado usando a Terceira Lei de Kepler:
 
-$$T = 2\pi \sqrt{a^3/GM_\odot} $$
+$$T = 2\pi \sqrt{\frac{a^3}{GM}} $$
 
 onde $a$ é o semi-eixo maior, calculado como:
 
@@ -93,7 +88,7 @@ $$
 A energia mecânica total E é constante ao longo da órbita e para uma órbita elíptica, a energia total pode ser expressa em termos:
 
 $$
-E = -\frac{GM_\odot m_p}{r_0 + r_{max}}
+E = -\frac{K}{r_0 + r_{max}}
 $$
 
 ## Coordenadas da Tela
@@ -116,6 +111,6 @@ onde:
 
 A simulação usa os seguintes fatores de escala:
 - Escala de distância: $1 \text{ pixel} = 10^9 \text{ metros}$
-- Escala de tempo: Ajustável com as teclas de seta, passo de tempo base = $10^5 \text{ segundos}$
 
-Esta escala nos permite visualizar as vastas distâncias no sistema solar dentro das limitações de uma tela de computador, mantendo as proporções corretas das órbitas.
+Esta escala nos permite visualizar as distâncias no sistema solar dentro das limitações de uma tela de computador, mantendo as proporções corretas das órbitas.
+
