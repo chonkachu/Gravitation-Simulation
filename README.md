@@ -29,13 +29,9 @@ Apos um planeta ser selecionado os valores do momentum angular, período orbital
 
 ## Constantes Fundamentais
 
-$
-G = 6.67430 \times 10^{-11} \text{ m}^3\text{kg}^{-1}\text{s}^{-2}
-$
+$ G = 6.67430 \times 10^{-11} \text{ m}^3\text{kg}^{-1}\text{s}^{-2} $
 
-$
-M = 1.989 \times 10^{30} \text{ kg}
-$
+$M = 1.989 \times 10^{30} \text{ kg} $
 
 ## Parâmetro Gravitacional
 
