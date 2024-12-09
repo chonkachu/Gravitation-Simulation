@@ -43,7 +43,7 @@ $$
 
 ## Momento Angular
 
-O momento angular L é uma constante do movimento em problemas de força central e é calculado como:
+O momentum angular L é constante em problemas de força central e é calculado como:
 
 $$
 L = \sqrt{(1 + e)(Km_pr_0)}
@@ -57,7 +57,7 @@ $$
 r(\theta) = \frac{L^2}{Km_p} \cdot \frac{1}{1 + e\cos(\theta)}
 $$
 
-Essa é a forma polar da equação da órbita para uma seção cônica (uma elipse, neste caso):
+Essa é a forma polar da equação da órbita para uma seção cônica (uma elipse, neste caso).
 
 ## Período Orbital
 
